@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -44,21 +46,24 @@ public class Main {
     }
 
     private static void inputTask(Scanner scanner) {
-        Task task = new Task(null);
 
         System.out.println("\n===========================================================================");
         System.out.print("Введите название задачи: ");
-        task.setTitle(scanner.nextLine());
+        String title = Task.checkTitle(scanner.nextLine());
 
         System.out.println("\n===========================================================================");
         System.out.print("Введите описание задачи (не обязательно): ");
-        task.setDescription(scanner.nextLine());
+        String description = Task.checkDescription(scanner.nextLine());
+        LocalDate date;
+        LocalTime time;
+        Task.TaskType type;
+        Task.Repeatability repeatable;
 
         System.out.println("\n===========================================================================");
         while (true) {
             System.out.print("Введите дату выполнения: ");
             try {
-                task.setDate(scanner.nextLine());
+                date = Planner.stringToDate(scanner.nextLine());
                 break;
             } catch (Exception e) {
                 System.out.println(ANSI_RED + "НЕКОРРЕКТНЫЙ ФОРМАТ ДАТЫ" + ANSI_RESET);
@@ -69,7 +74,7 @@ public class Main {
         while (true) {
             System.out.print("Введите время выполнения: ");
             try {
-                task.setTime(scanner.nextLine());
+                time = Task.checkTime(scanner.nextLine());
                 break;
             } catch (Exception e) {
                 System.out.println(ANSI_RED + "НЕКОРРЕКТНЫЙ ФОРМАТ ВРЕМЕНИ" + ANSI_RESET);
@@ -87,7 +92,7 @@ public class Main {
             System.out.print("Выберите тип задачи: ");
             int taskType = scanner.nextInt();
             try {
-                task.setType(taskType);
+                type = Task.checkType(taskType);
                 break;
             } catch (Exception e) {
                 System.out.println(ANSI_RED + "ВЫБЕРИТЕ ПУНКТ МЕНЮ" + ANSI_RESET);
@@ -109,14 +114,34 @@ public class Main {
             int taskRepeat = scanner.nextInt();
             scanner.nextLine();
             try {
-                task.setRepeatability(taskRepeat);
+                repeatable = Task.checkRepeatability(taskRepeat);
                 break;
             } catch (Exception e) {
                 System.out.println(ANSI_RED + "ВЫБЕРИТЕ ПУНКТ МЕНЮ" + ANSI_RESET);
             }
         }
-
-        Planner.addTask(task);
+        switch (repeatable) {
+            case DAILY:
+                DailyTask dailyTask = new DailyTask(title, description, type, date, time, repeatable);
+                Planner.addTask(dailyTask);
+                break;
+            case WEEKLY:
+                WeeklyTask weeklyTask = new WeeklyTask(title, description, type, date, time, repeatable);
+                Planner.addTask(weeklyTask);
+                break;
+            case MONTHLY:
+                MonthlyTask monthlyTask = new MonthlyTask(title, description, type, date, time, repeatable);
+                Planner.addTask(monthlyTask);
+                break;
+            case YEARLY:
+                YearlyTask yearlyTask = new YearlyTask(title, description, type, date, time, repeatable);
+                Planner.addTask(yearlyTask);
+                break;
+            case ONE_TIME:
+                Task task = new Task(title, description, type, date, time, repeatable);
+                Planner.addTask(task);
+                break;
+        }
     }
 
     private static void printMenu() {
