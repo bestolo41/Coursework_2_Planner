@@ -102,10 +102,18 @@ public abstract class Planner {
         int maxTypeLength = "Тип".length();
 
         for (Task task : tasks.values()) {
-            if (Integer.toString(task.getId()).length() > maxIdLength) maxIdLength = Integer.toString(task.getId()).length();
-            if (task.getTitle().length() > maxTitleLength) maxTitleLength = task.getTitle().length();
-            if (task.getDescription().length() > maxDescriptionLength) maxDescriptionLength = task.getDescription().length();
-            if (task.getType().length() > maxTypeLength) maxTypeLength = task.getType().length();
+            if (Integer.toString(task.getId()).length() > maxIdLength) {
+                maxIdLength = Integer.toString(task.getId()).length();
+            }
+            if (task.getTitle().length() > maxTitleLength) {
+                maxTitleLength = task.getTitle().length();
+            }
+            if (task.getDescription().length() > maxDescriptionLength) {
+                maxDescriptionLength = task.getDescription().length();
+            }
+            if (task.getType().length() > maxTypeLength) {
+                maxTypeLength = task.getType().length();
+            }
         }
 
         StrLength.ID.setValue(maxIdLength);
